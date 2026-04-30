@@ -21,5 +21,4 @@ echo "Status: Prisma engine binary ($BINARY_NAME) is placed in backend root."
 # ここでバイナリが同ディレクトリにあることを検知させます
 prisma generate
 
-# 4. DB構造の反映
 prisma db push --accept-data-loss
