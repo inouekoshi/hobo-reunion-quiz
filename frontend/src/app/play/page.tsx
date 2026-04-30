@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useWebSocket } from "@/hooks/useWebSocket";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function PlayPage() {
   const router = useRouter();
@@ -200,9 +201,18 @@ export default function PlayPage() {
               すべての問題が終了しました！<br />
               スクリーンで最終結果をご覧ください。
             </p>
-            <p className="text-gray-500 mt-6 text-sm">
-              戦績は大会終了後に配布されるQRコードから確認できます。
-            </p>
+            <div className="mt-8 flex flex-col items-center bg-gray-50 p-6 rounded-xl border border-gray-200">
+              <p className="text-gray-800 font-bold mb-4">👇 あなたのチームの詳細戦績を見る</p>
+              <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-100">
+                <QRCodeSVG value={`${window.location.origin}/result/${teamInfo.id}`} size={160} />
+              </div>
+              <button 
+                onClick={() => router.push(`/result/${teamInfo.id}`)}
+                className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors"
+              >
+                戦績ページを開く
+              </button>
+            </div>
           </div>
         )}
       </main>

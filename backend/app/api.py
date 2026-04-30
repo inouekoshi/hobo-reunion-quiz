@@ -211,3 +211,60 @@ async def finish_quiz():
         }
     })
     return {"status": "finished"}
+
+@router.get("/teams/{team_id}/stats")
+async def get_team_stats(team_id: int):
+    team = await prisma.team.find_unique(where={"id": team_id})
+    if not team:
+        raise HTTPException(status_code=404, detail="Team not found")
+        
+    answers = await prisma.answer.find_many(
+        where={"teamId": team_id},
+        include={"question": {"include": {"options": True}}},
+        order={"createdAt": "asc"}
+    )
+    
+    # 全チームを取得して順位を計算
+    all_teams = await prisma.team.find_many(order={"score": "desc"})
+    rank = 1
+    for t in all_teams:
+        if t.id == team_id:
+            break
+        rank += 1
+        
+    correct_count = sum(1 for a in answers if a.isCorrect)
+    total_answers = len(answers)
+    accuracy = (correct_count / total_answers * 100) if total_answers > 0 else 0
+    
+    normal_answers = [a for a in answers if a.question.type == "normal"]
+    avg_time = sum(a.timeTaken for a in normal_answers) / len(normal_answers) if normal_answers else 0
+
+    history = []
+    for a in answers:
+        option_text = "-"
+        if a.question and a.question.options:
+            for opt in a.question.options:
+                if opt.id == a.optionId:
+                    option_text = f"{chr(64 + opt.order)}. {opt.text}"
+                    break
+                    
+        history.append({
+            "question_id": a.questionId,
+            "question_text": a.question.text,
+            "question_type": a.question.type,
+            "option_text": option_text,
+            "bet": a.bet,
+            "time_taken": a.timeTaken,
+            "is_correct": a.isCorrect,
+            "points": a.points
+        })
+
+    return {
+        "team_name": team.name,
+        "score": team.score,
+        "rank": rank,
+        "total_teams": len(all_teams),
+        "accuracy": round(accuracy, 1),
+        "avg_time": round(avg_time, 2),
+        "history": history
+    }
