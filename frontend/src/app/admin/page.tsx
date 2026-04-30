@@ -100,6 +100,10 @@ export default function AdminPage() {
     // if (!confirm("新しい部屋を作成します。既存のデータはすべてリセットされます。よろしいですか？")) return;
     const res = await fetch(`${API_URL}/admin/room`, { method: "POST" });
     const data = await res.json();
+    if (data.error) {
+      alert("Backend Error: " + data.error + "\n" + (data.traceback || ""));
+      return;
+    }
     setRoom(data);
     setTeams([]);
     setQuestions([]);
