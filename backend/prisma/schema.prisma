@@ -9,13 +9,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Room {
+  id        Int        @id @default(autoincrement())
+  passcode  String     @unique
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  teams     Team[]
+  questions Question[]
+}
+
 model Team {
   id        Int      @id @default(autoincrement())
   name      String   @unique
-  passcode  String
   score     Float    @default(0)
+  roomId    Int?
+  bets3x    Int      @default(1)   // 3倍ベット残り回数
+  bets2x    Int      @default(2)   // 2倍ベット残り回数
   createdAt DateTime @default(now())
 
+  room      Room?    @relation(fields: [roomId], references: [id])
   answers   Answer[]
 }
 
@@ -23,12 +35,14 @@ model Question {
   id            Int      @id @default(autoincrement())
   text          String
   type          String   // "normal", "majority"
-  timeLimit     Int      @default(30) // seconds
-  correctOption Int?     // for normal questions
-  options       Option[]
+  timeLimit     Int      @default(60) // seconds
+  correctOption Int?     // for normal questions (1-4)
+  roomId        Int?
   isActive      Boolean  @default(false)
   createdAt     DateTime @default(now())
 
+  room          Room?    @relation(fields: [roomId], references: [id])
+  options       Option[]
   answers       Answer[]
 }
 
@@ -44,11 +58,11 @@ model Answer {
   id         Int      @id @default(autoincrement())
   teamId     Int
   questionId Int
-  optionId   Int      // Which option they picked
+  optionId   Int
   bet        Int      // 1, 2, or 3
-  timeTaken  Float    // in milliseconds
-  isCorrect  Boolean? // null for majority questions until calculated
-  points     Float?   // calculated points
+  timeTaken  Float    // seconds
+  isCorrect  Boolean?
+  points     Float?
   createdAt  DateTime @default(now())
 
   team       Team     @relation(fields: [teamId], references: [id])

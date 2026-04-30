@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
@@ -9,93 +9,101 @@ export default function Home() {
   const [teamName, setTeamName] = useState("");
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLoginOrRegister = async (e: React.FormEvent) => {
+  const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      // 本番ではログイン専用エンドポイントを分けますが、今回は簡易的に全チーム取得して照合か、なければ作成とします
-      const res = await fetch(`${API_URL}/teams`);
-      const teams = await res.json();
-      
-      const existingTeam = teams.find((t: any) => t.name === teamName);
+      const res = await fetch(`${API_URL}/room/join`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ team_name: teamName, passcode }),
+      });
 
-      let teamId = null;
-
-      if (existingTeam) {
-        if (existingTeam.passcode === passcode) {
-          teamId = existingTeam.id; // ログイン成功
-        } else {
-          setError("パスコードが間違っています。");
-          return;
-        }
-      } else {
-        // 新規登録
-        const createRes = await fetch(`${API_URL}/teams`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: teamName, passcode }),
-        });
-        
-        if (!createRes.ok) {
-          setError("チーム登録に失敗しました。");
-          return;
-        }
-        const createdTeam = await createRes.json();
-        teamId = createdTeam.id;
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.detail || "入室できませんでした。");
+        return;
       }
 
-      // localStorageに保存して解答画面へ遷移
-      localStorage.setItem("teamId", teamId.toString());
-      localStorage.setItem("teamName", teamName);
+      const data = await res.json();
+      localStorage.setItem("teamId", data.team_id.toString());
+      localStorage.setItem("teamName", data.team_name);
+      localStorage.setItem("bets3x", data.bets3x.toString());
+      localStorage.setItem("bets2x", data.bets2x.toString());
       router.push("/play");
-
     } catch (err) {
-      console.error(err);
       setError("サーバーに接続できません。");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
-        <h1 className="text-3xl font-extrabold text-center text-blue-600 mb-2">Hobo Reunion Quiz</h1>
-        <p className="text-center text-gray-500 mb-8">チーム名とパスコードを入力して参加してください</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-gray-950 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-sm">
+        {/* ロゴ */}
+        <div className="text-center mb-8">
+          <div className="text-6xl mb-3">🎯</div>
+          <h1 className="text-3xl font-black text-white leading-tight">
+            Hobo Reunion
+            <span className="block text-blue-400">Quiz</span>
+          </h1>
+          <p className="text-gray-400 text-sm mt-2">第71回 保々中学校同窓会</p>
+        </div>
 
-        {error && <div className="text-red-500 bg-red-50 p-3 rounded mb-4 text-sm">{error}</div>}
+        {/* ログインカード */}
+        <div className="bg-gray-900/80 backdrop-blur border border-gray-700 rounded-2xl p-6 shadow-2xl">
+          <h2 className="text-lg font-black text-white mb-5 text-center">チームで参加する</h2>
 
-        <form onSubmit={handleLoginOrRegister} className="space-y-6">
-          <div>
-            <label className="block font-bold text-gray-700 mb-2">チーム名 (全8チーム)</label>
-            <input 
-              type="text" 
-              required
-              className="w-full border-2 border-gray-200 p-3 rounded text-black focus:border-blue-500 focus:outline-none"
-              value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
-              placeholder="例: 1組テーブルA"
-            />
-          </div>
-          <div>
-            <label className="block font-bold text-gray-700 mb-2">パスコード (当日発表)</label>
-            <input 
-              type="password" 
-              required
-              className="w-full border-2 border-gray-200 p-3 rounded text-black focus:border-blue-500 focus:outline-none"
-              value={passcode}
-              onChange={(e) => setPasscode(e.target.value)}
-              placeholder="4桁の数字など"
-            />
-          </div>
-          <button 
-            type="submit" 
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded text-xl shadow-md transition-colors"
-          >
-            入場する
-          </button>
-        </form>
+          {error && (
+            <div className="bg-red-500/20 border border-red-500/50 text-red-300 p-3 rounded-xl text-sm mb-4 font-bold">
+              ⚠️ {error}
+            </div>
+          )}
+
+          <form onSubmit={handleJoin} className="space-y-4">
+            <div>
+              <label className="block text-sm font-bold text-gray-400 mb-2">チーム名</label>
+              <input
+                type="text"
+                required
+                autoComplete="off"
+                className="w-full bg-gray-800 border-2 border-gray-600 rounded-xl p-3 text-white text-lg font-bold placeholder-gray-600 focus:border-blue-500 focus:outline-none transition-colors"
+                value={teamName}
+                onChange={e => setTeamName(e.target.value)}
+                placeholder="例: 1組テーブルA"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-400 mb-2">
+                部屋パスコード
+                <span className="text-gray-600 font-normal ml-2">（司会者に確認）</span>
+              </label>
+              <input
+                type="text"
+                required
+                autoComplete="off"
+                maxLength={6}
+                className="w-full bg-gray-800 border-2 border-gray-600 rounded-xl p-3 text-white text-2xl font-black text-center tracking-widest placeholder-gray-600 focus:border-blue-500 focus:outline-none transition-colors uppercase"
+                value={passcode}
+                onChange={e => setPasscode(e.target.value.toUpperCase())}
+                placeholder="XXXXX"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-black py-4 rounded-xl text-xl shadow-lg transition-colors mt-2"
+            >
+              {loading ? "入室中..." : "入場する 🚀"}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
