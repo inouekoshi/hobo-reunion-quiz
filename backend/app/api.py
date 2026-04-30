@@ -278,8 +278,13 @@ async def reveal_answer(question_id: int):
     BASE_SCORE = 100
 
     if question and question.type == "normal":
+        # オプションIDからorderへのマッピングを作成
+        option_orders = {opt.id: opt.order for opt in question.options}
+        
         for ans in answers:
-            is_correct = (ans.optionId == question.correctOption)
+            ans_order = option_orders.get(ans.optionId)
+            is_correct = (ans_order == question.correctOption)
+            
             if is_correct:
                 speed_ratio = max(0, question.timeLimit - ans.timeTaken) / question.timeLimit
                 speed_bonus = speed_ratio * 50
@@ -388,11 +393,11 @@ async def submit_answer(ans: AnswerSubmit):
     if ans.bet == 3:
         if team.bets3x <= 0:
             raise HTTPException(status_code=400, detail="3倍ベットの残り回数がありません")
-        await prisma.team.update(where={"id": ans.team_id}, data={"bets3x": {"decrement": 1}})
+        await prisma.team.update(where={"id": ans.team_id}, data={"bets3x": team.bets3x - 1})
     elif ans.bet == 2:
         if team.bets2x <= 0:
             raise HTTPException(status_code=400, detail="2倍ベットの残り回数がありません")
-        await prisma.team.update(where={"id": ans.team_id}, data={"bets2x": {"decrement": 1}})
+        await prisma.team.update(where={"id": ans.team_id}, data={"bets2x": team.bets2x - 1})
     elif ans.bet != 1:
         raise HTTPException(status_code=400, detail="無効なベット倍率です")
 
