@@ -12,9 +12,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+import asyncio
+
 @app.on_event("startup")
 async def startup():
-    await prisma.connect()
+    # Renderのポートスキャン誤検知（Prismaエンジンのポートを先に見つけてしまう問題）を防ぐため、
+    # Uvicornのポートバインディングを優先させるよう非同期タスクとして接続します。
+    asyncio.create_task(prisma.connect())
 
 @app.on_event("shutdown")
 async def shutdown():
