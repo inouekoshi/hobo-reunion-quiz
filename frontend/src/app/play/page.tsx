@@ -153,7 +153,7 @@ export default function PlayPage() {
       <header className="bg-gray-900 border-b border-gray-700 p-4 flex justify-between items-center">
         <div>
           <div className="font-black text-blue-400 text-lg">{teamInfo.name}</div>
-          <div className="text-xs text-gray-500">Hobo Reunion Quiz</div>
+          <div className="text-xs text-gray-500">Party Quiz</div>
         </div>
         <div className={`text-xs font-bold px-3 py-1 rounded-full ${
           gameState.state === "answering" ? "bg-red-500/30 text-red-300 animate-pulse" :

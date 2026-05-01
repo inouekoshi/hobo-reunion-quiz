@@ -192,7 +192,7 @@ export default function ProjectorPage() {
       {/* タイトルバー */}
       <div className="bg-gray-900 border-b border-gray-800 px-8 py-3 flex justify-between items-center">
         <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">
-          Hobo Reunion Quiz
+          Party Quiz
         </h1>
         <span className={`text-sm font-bold px-4 py-1 rounded-full ${
           gameState.state === "answering" ? "bg-red-500/30 text-red-300 animate-pulse" :
@@ -351,7 +351,7 @@ export default function ProjectorPage() {
               <h2 className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-600 mb-2 drop-shadow-[0_0_30px_rgba(250,204,21,0.8)] animate-pulse">
                 🎉 FINAL RESULTS 🎉
               </h2>
-              <p className="text-xl text-gray-400">第71回 保々中学校同窓会 クイズ大会 — 最終結果</p>
+              <p className="text-xl text-gray-400">Welcome to Party Quiz クイズ大会 — 最終結果</p>
             </div>
             <div className="w-full max-w-4xl">
               <Leaderboard teams={leaderboard} highlight />

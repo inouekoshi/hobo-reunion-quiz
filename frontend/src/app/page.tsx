@@ -50,10 +50,10 @@ export default function Home() {
         <div className="text-center mb-8">
           <div className="text-6xl mb-3">🎯</div>
           <h1 className="text-3xl font-black text-white leading-tight">
-            Hobo Reunion
+            Party Quiz
             <span className="block text-blue-400">Quiz</span>
           </h1>
-          <p className="text-gray-400 text-sm mt-2">第71回 保々中学校同窓会</p>
+          <p className="text-gray-400 text-sm mt-2">Welcome to Party Quiz</p>
         </div>
 
         {/* ログインカード */}

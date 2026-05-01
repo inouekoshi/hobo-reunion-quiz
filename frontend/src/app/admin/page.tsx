@@ -297,7 +297,7 @@ export default function AdminPage() {
                     className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 focus:outline-none min-h-[100px] font-bold text-lg text-gray-900 placeholder-gray-300"
                     value={newQ.text}
                     onChange={e => setNewQ({ ...newQ, text: e.target.value })}
-                    placeholder="例: 保々中学校が創立されたのはいつ？"
+                    placeholder="例: 日本の首都はどこ？"
                   />
                 </div>
 

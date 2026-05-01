@@ -4,9 +4,9 @@ services:
     image: postgres:15-alpine
     restart: always
     environment:
-      POSTGRES_USER: hobo_user
-      POSTGRES_PASSWORD: hobo_password
-      POSTGRES_DB: hobo_quiz_db
+      POSTGRES_USER: quiz_user
+      POSTGRES_PASSWORD: quiz_password
+      POSTGRES_DB: quiz_db
     ports:
       - "5432:5432"
     volumes:

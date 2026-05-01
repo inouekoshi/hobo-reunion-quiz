@@ -2,12 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .db import prisma
 
-app = FastAPI(title="Hobo Reunion Quiz API")
+app = FastAPI(title="Party Quiz API")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://hobo-reunion-quiz.vercel.app",
+        "https://party-quiz.vercel.app",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
     ],
@@ -39,7 +39,7 @@ app.include_router(api_router, prefix="/api")
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to Hobo Reunion Quiz API"}
+    return {"message": "Welcome to Party Quiz API"}
 
 from fastapi import WebSocket, WebSocketDisconnect
 from .ws import manager

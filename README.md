@@ -1,15 +1,15 @@
-# Hobo Reunion Quiz (保々中学校同窓会 特別クイズシステム)
+# Party Quiz (パーティ用クイズシステム)
 
-第71回保々中学校同窓会のために開発された、リアルタイム参加型のチーム対抗クイズ大会システムです。
+リアルタイム参加型のチーム対抗クイズ大会システムです。
 スマホ/タブレットから参加する**参加者画面**、会場全体に投影する**プロジェクター画面**、進行を司る**管理者画面**が完全同期して動作します。
 
 ## 🌐 本番公開URL (デプロイ済み)
 
 実際に以下のURLにアクセスして、システムを利用・テストすることができます。
 
-- 📱 **参加者・解答画面**: [https://hobo-reunion-quiz.vercel.app/](https://hobo-reunion-quiz.vercel.app/)
-- 💻 **プロジェクター画面**: [https://hobo-reunion-quiz.vercel.app/projector](https://hobo-reunion-quiz.vercel.app/projector)
-- ⚙️ **管理者・司会者画面**: [https://hobo-reunion-quiz.vercel.app/admin](https://hobo-reunion-quiz.vercel.app/admin)
+- 📱 **参加者・解答画面**: [https://party-quiz.vercel.app/](https://party-quiz.vercel.app/)
+- 💻 **プロジェクター画面**: [https://party-quiz.vercel.app/projector](https://party-quiz.vercel.app/projector)
+- ⚙️ **管理者・司会者画面**: [https://party-quiz.vercel.app/admin](https://party-quiz.vercel.app/admin)
 
 ## ✨ 主な機能とクイズルール
 
@@ -39,7 +39,7 @@
 ## 📂 ディレクトリ構成
 
 ```text
-hobo-reunion-quiz/
+party-quiz/
 ├── backend/          # FastAPI & PrismaによるバックエンドAPI・WebSocketサーバー
 │   ├── app/          # APIルーター、状態管理(quiz_state.py)、WS管理(ws.py)、DB接続(db.py)
 │   ├── prisma/       # データベーススキーマ (schema.prisma)

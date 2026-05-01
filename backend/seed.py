@@ -16,7 +16,7 @@ async def seed_questions(prisma: Prisma, room_id: int):
     # 問題1 (通常問題)
     await prisma.question.create(
         data={
-            "text": "保々中学校の思い出の場所といえば？",
+            "text": "日本の首都はどこ？",
             "type": "normal",
             "timeLimit": 45,
             "correctOption": 1,

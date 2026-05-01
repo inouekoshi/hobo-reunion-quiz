@@ -39,7 +39,7 @@ export default function ResultPage() {
     <div className="min-h-screen bg-gray-100 text-gray-900 p-6 pb-20">
       <header className="mb-8 text-center pt-8">
         <h1 className="text-3xl font-extrabold text-blue-800 mb-2">{stats.team_name} チーム 戦績レポート</h1>
-        <p className="text-gray-600">第71回 保々中学校同窓会 クイズ大会</p>
+        <p className="text-gray-600">Welcome to Party Quiz クイズ大会</p>
       </header>
 
       <div className="max-w-3xl mx-auto space-y-6">

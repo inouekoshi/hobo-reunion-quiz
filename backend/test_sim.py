@@ -12,8 +12,8 @@ def run_simulation():
     # チーム登録
     print("\n--- 2. テストチームの登録 ---")
     suffix = str(random.randint(1000, 9999))
-    t1 = requests.post(f"{base_url}/teams", json={"name": f"HoboTeamA_{suffix}", "passcode": "0000"}).json()
-    t2 = requests.post(f"{base_url}/teams", json={"name": f"HoboTeamB_{suffix}", "passcode": "0000"}).json()
+    t1 = requests.post(f"{base_url}/teams", json={"name": f"TeamA_{suffix}", "passcode": "0000"}).json()
+    t2 = requests.post(f"{base_url}/teams", json={"name": f"TeamB_{suffix}", "passcode": "0000"}).json()
     t1_id, t2_id = t1["id"], t2["id"]
     print(f"  -> {t1['name']} と {t2['name']} が参加しました。")
 
