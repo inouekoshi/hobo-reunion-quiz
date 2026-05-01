@@ -131,11 +131,19 @@ async def get_teams():
     return await prisma.team.find_many(order={"score": "desc"})
 
 
+async def ensure_room_state():
+    if state.room_id is None:
+        active_room = await prisma.room.find_first(where={"isActive": True}, order={"createdAt": "desc"})
+        if active_room:
+            state.room_id = active_room.id
+
 @router.get("/state")
 async def get_state():
     """現在のクイズ進行ステータスを返す（リロード・再接続時の復帰用）"""
+    await ensure_room_state()
     # 最新のリーダーボード
     leaderboard = []
+
     if state.room_id:
         teams = await prisma.team.find_many(where={"roomId": state.room_id}, order={"score": "desc"})
         leaderboard = [t.model_dump() for t in teams]
@@ -169,6 +177,7 @@ class QuestionCreate(BaseModel):
 @router.post("/admin/questions")
 async def create_question(data: QuestionCreate):
     """管理者がリアルタイムで問題を作成する"""
+    await ensure_room_state()
     if state.room_id is None:
         raise HTTPException(status_code=400, detail="先に部屋を作成してください。")
     if data.type == "normal" and data.correct_option is None:
@@ -197,6 +206,7 @@ async def create_question(data: QuestionCreate):
 @router.get("/admin/questions")
 async def get_admin_questions():
     """管理者用: 現在の部屋の全問題リストを返す"""
+    await ensure_room_state()
     if state.room_id is None:
         return []
     return await prisma.question.find_many(
@@ -209,6 +219,7 @@ async def get_admin_questions():
 @router.get("/questions")
 async def get_questions():
     """参加者・プロジェクター用: 現在の部屋の全問題を返す"""
+    await ensure_room_state()
     if state.room_id is None:
         return []
     return await prisma.question.find_many(
@@ -251,6 +262,7 @@ async def close_question(question_id: int):
     state.status = "closed"
 
     # 現時点での回答数を取得して一緒に通知
+    await ensure_room_state()
     answer_count = await prisma.answer.count(where={"questionId": question_id})
     team_count = await prisma.team.count(where={"roomId": state.room_id}) if state.room_id else 0
 
@@ -323,6 +335,7 @@ async def reveal_answer(question_id: int):
                 )
 
     # 最新リーダーボード取得
+    await ensure_room_state()
     teams = await prisma.team.find_many(
         where={"roomId": state.room_id} if state.room_id else {},
         order={"score": "desc"}
@@ -350,6 +363,7 @@ async def reveal_answer(question_id: int):
 @router.post("/admin/finish")
 async def finish_quiz():
     """クイズ大会を終了し、最終表彰画面へ"""
+    await ensure_room_state()
     state.status = "finished"
     teams = await prisma.team.find_many(
         where={"roomId": state.room_id} if state.room_id else {},
@@ -436,6 +450,7 @@ async def update_score(data: ScoreUpdate):
         where={"id": data.team_id},
         data={"score": {"increment": data.score_delta}}
     )
+    await ensure_room_state()
     teams = await prisma.team.find_many(
         where={"roomId": state.room_id} if state.room_id else {},
         order={"score": "desc"}

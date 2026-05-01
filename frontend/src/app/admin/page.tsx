@@ -66,11 +66,11 @@ export default function AdminPage() {
 
       // アクティブな部屋を取得
       const roomRes = await fetch(`${API_URL}/admin/room`);
-      const rooms = await roomRes.json();
-      if (rooms.length > 0) {
-        setRoom(rooms[0]);
+      const roomData = await roomRes.json();
+      if (roomData && roomData.room) {
+        setRoom(roomData.room);
         // 部屋の問題リストも取得
-        fetchQuestions(rooms[0].id);
+        fetchQuestions(roomData.room.id);
       }
     } catch (e) {
       console.error(e);
@@ -113,7 +113,7 @@ export default function AdminPage() {
       alert("エラーが発生しました: " + data.error);
       return;
     }
-    setRoom(data);
+    setRoom({ id: data.room_id, passcode: data.passcode });
     setTeams([]);
     setQuestions([]);
     setGameState({ state: "waiting", question_id: null });
