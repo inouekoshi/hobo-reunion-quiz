@@ -294,7 +294,7 @@ export default function AdminPage() {
                   <label className="block text-sm font-bold text-gray-600 mb-2">問題文</label>
                   <textarea
                     required
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 focus:outline-none min-h-[100px] font-bold text-lg"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-blue-500 focus:outline-none min-h-[100px] font-bold text-lg text-gray-900 placeholder-gray-300"
                     value={newQ.text}
                     onChange={e => setNewQ({ ...newQ, text: e.target.value })}
                     placeholder="例: 保々中学校が創立されたのはいつ？"
@@ -305,7 +305,7 @@ export default function AdminPage() {
                   <div>
                     <label className="block text-sm font-bold text-gray-600 mb-2">クイズ形式</label>
                     <select
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 font-bold"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 font-bold text-gray-900"
                       value={newQ.type}
                       onChange={e => setNewQ({ ...newQ, type: e.target.value })}
                     >
@@ -317,7 +317,7 @@ export default function AdminPage() {
                     <label className="block text-sm font-bold text-gray-600 mb-2">制限時間 (秒)</label>
                     <input
                       type="number"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 font-bold"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 font-bold text-gray-900"
                       value={newQ.timeLimit}
                       onChange={e => setNewQ({ ...newQ, timeLimit: parseInt(e.target.value) || 0 })}
                     />
@@ -340,7 +340,7 @@ export default function AdminPage() {
                         <input
                           type="text"
                           required
-                          className="flex-1 bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-bold"
+                          className="flex-1 bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-bold text-gray-900 placeholder-gray-300"
                           placeholder={`選択肢 ${String.fromCharCode(65 + i)}`}
                           value={opt.text}
                           onChange={e => {
